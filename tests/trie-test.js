@@ -42,5 +42,14 @@ describe('Trie', () => {
 
   })
 
+  it('should be able to insert more than one word', () => {
+    trie.insert('gig');
+    trie.insert('laugh');
+
+    assert.equal(trie.root.children.hasOwnProperty('g'), true);
+    assert.equal(trie.root.children.hasOwnProperty('l'), true);
+    assert.equal(trie.root.children.hasOwnProperty('f'), false);
+  })
+
 
 })
