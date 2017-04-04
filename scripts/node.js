@@ -1,5 +1,5 @@
 export default class Node {
-  constructor(data, children = {}) {
+  constructor(data = null, children = {}) {
     this.data = data;
     this.children = children;
   }
