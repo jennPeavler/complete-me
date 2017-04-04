@@ -94,19 +94,26 @@ describe('Trie', () => {
     console.log(trie.root.children.l.children)
   })
 
-  // it('should build onto an existing data structure', () => {
-  //   trie.insert('gig');
-  //   trie.insert('giggle');
-  //
-  //   assert.equal(trie.root.children.hasOwnProperty('g'), true);
-  //   assert.equal(trie.root.children.g.children.hasOwnProperty('i'), true);
-  //   assert.equal(trie.root.children.g.children.i.children.hasOwnProperty('g'), true);
-  //   assert.equal(trie.root.children.g.children.i.children.g.children.hasOwnProperty('g'), true);
-  //   assert.equal(trie.root.children.g.children.i.children.g.children.g.children.hasOwnProperty('l'), true);
-  //   assert.equal(trie.root.children.g.children.i.children.g.children.g.children.l.children.hasOwnProperty('e'), true);
-  //   assert.deepEqual(trie.root.children.g.children.i.children.g.children.g.children.l.children.e.children, {});
-  //
-  // })
+  it('should keep track of how many words it has', () => {
+    trie.insert('gig');
+    // assert.equal(trie.count(), 1)
+    trie.insert('giggle');
+    // assert.equal(trie.count(), 2)
+    trie.insert('gift');
+    // assert.equal(trie.count(), 3)
+    trie.insert('laugh');
+    trie.insert('laughter');
+    trie.insert('love');
+    trie.insert('gross');
+    assert.equal(trie.count(), 7)
+  })
+
+  it('should suggest a word(s) after partial input', () => {
+    trie.suggest('lau')
+    // assert.deepEqual(trie.suggest('lau'), ['laugh', 'laughing'])
+
+  })
+
 
 
 })
