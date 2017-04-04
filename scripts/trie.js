@@ -22,6 +22,7 @@ export default class Trie {
       }
       currentNode = currentNode.children[letter];
     })
+    currentNode.endWord = true;
     // this.wordCount++;
     // console.log(this.root);
     return splitWord;
@@ -31,18 +32,18 @@ export default class Trie {
     return this.wordCount;
   }
 
-  suggest(partialWord) {
-    console.log('in partialWord')
-    let splitWord = partialWord.split('');
-    let currentNode = this.root;
-    let fullWord = '';
-    splitWord.forEach(letter => {
-      if(currentNode.children[letter]) {
-        fullWord.concat(letter);
-        console.log(fullWord);
-      }
-      currentNode = currentNode.children[letter]
-    })
-  }
+  // suggest(partialWord) {
+  //   console.log('in partialWord')
+  //   let splitWord = partialWord.split('');
+  //   let currentNode = this.root;
+  //   let fullWord = '';
+  //   splitWord.forEach(letter => {
+  //     if(currentNode.children[letter]) {
+  //       fullWord.concat(letter);
+  //       console.log(fullWord);
+  //     }
+  //     currentNode = currentNode.children[letter]
+  //   })
+  // }
 
 }
