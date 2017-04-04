@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import { assert } from 'chai';
 import Trie from '../scripts/trie'
 import Node from '../scripts/node'
+require ('locus')
 
 
 describe('Trie', () => {
@@ -107,6 +108,8 @@ describe('Trie', () => {
     let trie = new Trie();
     trie.insert('gig');
     assert.equal(trie.count(), 1)
+    trie.insert('gig');
+    assert.equal(trie.count(), 1)
     trie.insert('giggle');
     assert.equal(trie.count(), 2)
     trie.insert('gift');
@@ -135,11 +138,16 @@ describe('Trie', () => {
     // console.log(trie.root.children.p.children);
   })
 
-  // it('should suggest a word(s) after partial input', () => {
-  //   trie.suggest('lau')
-  //   // assert.deepEqual(trie.suggest('lau'), ['laugh', 'laughing'])
-  //
-  // })
+  it.only('should suggest a word(s) after partial input', () => {
+    let trie = new Trie();
+    // trie.insert('gig')
+    // trie.suggest('gig')
+    trie.insert('laugh')
+    // trie.insert('laude')
+    trie.suggest('lau')
+    // assert.deepEqual(trie.suggest('lau'), ['laugh', 'laughing'])
+
+  })
 
 
 
