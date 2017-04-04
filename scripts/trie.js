@@ -1,7 +1,17 @@
 import Node from './node'
 
 export default class Trie {
-  constructor(data = null) {
-    this.root = data ? new Node(name) : null
+
+  constructor() {
+    this.root = new Node();
   }
+
+  insert(data) {
+    let splitWord = data.split('');
+    return splitWord;
+  }
+  // addNode() {
+  //   this.children.hasOwnProperty
+  //   let node = new Node(data, children);
+  // }
 }

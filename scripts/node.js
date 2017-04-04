@@ -3,4 +3,5 @@ export default class Node {
     this.data = data;
     this.children = children;
   }
+
 }
