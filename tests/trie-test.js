@@ -170,7 +170,7 @@ describe('Trie', () => {
     expect(trie.count()).to.equal(235886)
   })
 
-  it.only('should be able to expand the built in dictionary', () => {
+  it('should be able to expand the built in dictionary', () => {
     let trie = new Trie();
 
     trie.loadBuiltInDictionary();
@@ -178,6 +178,43 @@ describe('Trie', () => {
     expect(trie.count()).to.equal(235887)
   })
 
+  it('should suggest words from the built in dictionary', () => {
+    let trie = new Trie();
+    trie.loadBuiltInDictionary();
+    trie.suggest('piz');
+    assert.deepEqual(trie.autocomplete, ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"])
+  })
+
+  it('should suggest words from the built in dictionary - test2', () => {
+    let trie = new Trie();
+    trie.loadBuiltInDictionary();
+    trie.suggest('Zyr');
+    assert.deepEqual(trie.autocomplete, ["Zyrenian", "Zyrian", "Zyryan"])
+  })
+
+  it('should take into account capital letters', () => {
+    let trie = new Trie();
+    trie.loadBuiltInDictionary();
+    trie.suggest('zyr');
+    expect(trie.autocomplete).to.not.equal(["Zyrenian", "Zyrian", "Zyryan"])
+  })
+
+  it('should take into account capital letters', () => {
+    let trie = new Trie();
+    trie.loadBuiltInDictionary();
+    trie.suggest('zyr');
+    expect(trie.autocomplete).to.not.equal(["Zyrenian", "Zyrian", "Zyryan"])
+  })
+
+  it.only('locate the last node of a string', () => {
+    let trie = new Trie();
+    trie.insert('loud')
+    trie.insert('love')
+    let lastNode = trie.locateLastNode('lo')
+    assert.deepEqual(Object.keys(lastNode.children), ['u', 'v'])
+
+  })
 
 
+//******End of Describe
 })

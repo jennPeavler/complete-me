@@ -68,5 +68,21 @@ export default class Trie {
     } )
   }
 
+  locateLastNode(string) {
+    let splitWord = string.split('');
+    let lastNode = this.root;
+
+    if(!lastNode.children[splitWord[0]]) {
+      return 'not found';
+    }
+
+    splitWord.forEach(letter => {
+      if(lastNode.children[letter]) {
+      lastNode = lastNode.children[letter];
+      }
+    })
+    return lastNode;
+  }
+
 //*****End of Trie Class
 }
