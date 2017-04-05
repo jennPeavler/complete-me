@@ -31,11 +31,6 @@ describe('Trie', () => {
     assert.deepEqual(Object.keys(trie.root.children), []);
   })
 
-  it('should split a word into an array of letters', () => {
-    let trie = new Trie();
-    assert.deepEqual(trie.insert('gig'), ['g', 'i', 'g']);
-  })
-
   it('should be able to add nodes for letters in words', () => {
     let trie = new Trie();
     trie.insert('gig');
@@ -106,47 +101,66 @@ describe('Trie', () => {
 
   it('should keep track of how many words it has', () => {
     let trie = new Trie();
+
     trie.insert('gig');
     assert.equal(trie.count(), 1)
+
     trie.insert('gig');
     assert.equal(trie.count(), 1)
+
     trie.insert('giggle');
     assert.equal(trie.count(), 2)
+
     trie.insert('gift');
     assert.equal(trie.count(), 3)
-    trie.insert('laugh');
-    assert.equal(trie.count(), 4)
+
+    trie.insert('gift');
+    assert.equal(trie.count(), 3)
     trie.insert('laughter');
-    assert.equal(trie.count(), 5)
-    trie.insert('love');
-    assert.equal(trie.count(), 6)
-    trie.insert('gross');
-    assert.equal(trie.count(), 7)
+
+    assert.equal(trie.count(), 4)
   })
 
   it('should set the node property endWord to true if node is end of word', () => {
     let trie = new Trie();
     trie.insert('gig');
     trie.insert('pot');
-    // console.log(trie.root.children.g.children.i.children.g);
+
     assert.equal(trie.root.children.g.children.i.children.g.endWord, true);
     assert.equal(trie.root.children.p.children.o.children.t.endWord, true);
     assert.equal(trie.root.children.p.endWord, false)
-    // assert.equal(trie.root.children.p.endWord, true)
-    // console.log(trie.root.children.p.children.o.children);
-    // console.log('count: ' + trie.count());
-    // console.log(trie.root.children.p.children);
   })
 
-  it.only('should suggest a word(s) after partial input', () => {
+  it('should not suggest incorrect words that begin with the same letter', () => {
     let trie = new Trie();
-    // trie.insert('gig')
-    // trie.suggest('gig')
-    trie.insert('laugh')
-    // trie.insert('laude')
-    trie.suggest('lau')
-    // assert.deepEqual(trie.suggest('lau'), ['laugh', 'laughing'])
 
+    trie.insert('laugh')
+    trie.insert('laughter')
+    trie.insert('laude')
+    trie.insert('little')
+    trie.suggest('lau')
+    assert.deepEqual(trie.autocomplete, ['laugh', 'laughter', 'laude'])
+  })
+
+  it('should suggest words that have the same first letter', () => {
+    let trie = new Trie();
+
+    trie.insert('gig')
+    trie.insert('giggle')
+    trie.insert('gross')
+    trie.suggest('g')
+    assert.deepEqual(trie.autocomplete, ['gig', 'giggle', 'gross'])
+  })
+
+  it('should not suggest words that do not have the same first letter', () => {
+    let trie = new Trie();
+
+    trie.insert('gig')
+    trie.insert('giggle')
+    trie.insert('gross')
+    trie.insert('laugh')
+    trie.suggest('g')
+    assert.deepEqual(trie.autocomplete, ['gig', 'giggle', 'gross'])
   })
 
 
