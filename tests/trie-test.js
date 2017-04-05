@@ -163,6 +163,20 @@ describe('Trie', () => {
     assert.deepEqual(trie.autocomplete, ['gig', 'giggle', 'gross'])
   })
 
+  it('should have access to the built in dictionary', () => {
+    let trie = new Trie();
+
+    trie.loadBuiltInDictionary();
+    expect(trie.count()).to.equal(235886)
+  })
+
+  it.only('should be able to expand the built in dictionary', () => {
+    let trie = new Trie();
+
+    trie.loadBuiltInDictionary();
+    trie.insert('superJackPotBaaaby')
+    expect(trie.count()).to.equal(235887)
+  })
 
 
 

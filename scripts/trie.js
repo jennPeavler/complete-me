@@ -1,5 +1,5 @@
 import Node from './node'
-
+import fs from 'fs';
 require ('locus')
 
 export default class Trie {
@@ -59,6 +59,14 @@ export default class Trie {
     })
   }
 
-//*****End of Trie Class
+  loadBuiltInDictionary () {
+    const text = "/usr/share/dict/words"
+    let dictionary = fs.readFileSync(text).toString().trim().split('\n')
 
+    dictionary.forEach(word => {
+      this.insert(word);
+    } )
+  }
+
+//*****End of Trie Class
 }
