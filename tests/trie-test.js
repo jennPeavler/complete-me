@@ -137,8 +137,9 @@ describe('Trie', () => {
     trie.insert('laughter')
     trie.insert('laude')
     trie.insert('little')
-    trie.suggest('lau')
-    assert.deepEqual(trie.autocomplete, ['laugh', 'laughter', 'laude'])
+
+    let autocompleteList = trie.suggest('lau')
+    assert.deepEqual(autocompleteList, ['laugh', 'laughter', 'laude'])
   })
 
   it('should suggest words that have the same first letter', () => {
@@ -147,8 +148,8 @@ describe('Trie', () => {
     trie.insert('gig')
     trie.insert('giggle')
     trie.insert('gross')
-    trie.suggest('g')
-    assert.deepEqual(trie.autocomplete, ['gig', 'giggle', 'gross'])
+    let autocompleteList = trie.suggest('g')
+    assert.deepEqual(autocompleteList, ['gig', 'giggle', 'gross'])
   })
 
   it('should not suggest words that do not have the same first letter', () => {
@@ -158,8 +159,8 @@ describe('Trie', () => {
     trie.insert('giggle')
     trie.insert('gross')
     trie.insert('laugh')
-    trie.suggest('g')
-    assert.deepEqual(trie.autocomplete, ['gig', 'giggle', 'gross'])
+    let autocompleteList = trie.suggest('g')
+    assert.deepEqual(autocompleteList, ['gig', 'giggle', 'gross'])
   })
 
   it('should have access to the built in dictionary', () => {
@@ -180,15 +181,15 @@ describe('Trie', () => {
   it('should suggest words from the built in dictionary', () => {
     let trie = new Trie();
     trie.loadBuiltInDictionary();
-    trie.suggest('piz');
-    assert.deepEqual(trie.autocomplete, ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"])
+    let autocompleteList = trie.suggest('piz');
+    assert.deepEqual(autocompleteList, ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"])
   })
 
   it('should suggest words from the built in dictionary - test2', () => {
     let trie = new Trie();
     trie.loadBuiltInDictionary();
-    trie.suggest('Zyr');
-    assert.deepEqual(trie.autocomplete, ["Zyrenian", "Zyrian", "Zyryan"])
+    let autocompleteList = trie.suggest('Zyr');
+    assert.deepEqual(autocompleteList, ["Zyrenian", "Zyrian", "Zyryan"])
   })
 
   it('should take into account capital letters', () => {
@@ -230,15 +231,19 @@ describe('Trie', () => {
     assert.equal(lastNode.selectionCount, 1)
   })
 
-  it.only('be a test', () => {
+  it('should give suggestion preference to most selected words', () => {
     let trie = new Trie()
+
     trie.insert('boo')
     trie.insert('boogie')
-    trie.insert('boobies')
-    trie.select('boobies')
-    trie.select('boobies')
+    trie.insert('boolean')
+    trie.select('boolean')
+    trie.select('boolean')
     trie.select('boogie')
-    trie.suggest('boo')
+
+    let autocompleteList = trie.suggest('boo')
+    expect(autocompleteList).to.deep.equal([ 'boolean', 'boogie', 'boo' ])
+
   })
 //******End of Describe
 })
