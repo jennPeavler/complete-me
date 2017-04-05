@@ -1,5 +1,7 @@
 import Node from './node'
 import fs from 'fs';
+import { assert } from 'chai'
+import { expect } from 'chai'
 require ('locus')
 
 export default class Trie {
@@ -8,7 +10,6 @@ export default class Trie {
     this.root = new Node();
     this.wordCount = 0;
     this.autocomplete = []
-    this.autocompleteList = [];
   }
 
   insert(word) {
@@ -33,16 +34,15 @@ export default class Trie {
 
   suggest(partialWord) {
     let currentNode = this.locateLastNode(partialWord)
+
     this.autocomplete = this.autocompletePush(currentNode, partialWord)
-    // console.log(this.autocomplete)
     this.autocomplete.sort(( currentElement, nextElement) => {
       return nextElement.selectionCount - currentElement.selectionCount;
     });
-
-    this.autocomplete.forEach(element => {
-      this.autocompleteList.push(element.suggestedWord)
+    this.autocomplete.forEach((element, i) => {
+      this.autocomplete[i] = element.suggestedWord
     })
-    return this.autocompleteList;
+    return this.autocomplete;
   }
 
   autocompletePush (currentNode, suggestedWord) {
@@ -87,5 +87,16 @@ export default class Trie {
     lastNode.selectionCount++;
   }
 
+  traverseNodesTest (word) {
+    let currentNode = this.root;
+    word.split('').forEach(letter => {
+      if(currentNode.children[letter]) {
+        // eval(locus);
+        assert.equal(currentNode.children[letter].data, letter)
+        expect(currentNode.children[letter].data).to.not.equal('z')
+        currentNode = currentNode.children[letter]
+      }
+    })
+  }
 //*****End of Trie Class
 }
