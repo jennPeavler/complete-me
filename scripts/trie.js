@@ -8,6 +8,7 @@ export default class Trie {
     this.root = new Node();
     this.wordCount = 0;
     this.autocomplete = []
+    this.autocompleteList = [];
   }
 
   insert(word) {
@@ -32,19 +33,30 @@ export default class Trie {
 
   suggest(partialWord) {
     let currentNode = this.locateLastNode(partialWord)
-    this.autocompletePush(currentNode, partialWord)
+    this.autocomplete = this.autocompletePush(currentNode, partialWord)
+    console.log(this.autocomplete)
+    this.autocomplete.sort(( currentElement, nextElement) => {
+      return nextElement.selectionCount - currentElement.selectionCount;
+    });
+    console.log(this.autocomplete);
+    this.autocomplete.forEach(element => {
+      this.autocompleteList.push(element.suggestedWord)
+    })
+
+    console.log(this.autocompleteList);
+    return this.autocompleteList;
   }
 
   autocompletePush (currentNode, suggestedWord) {
     if(currentNode.endWord) {
-      this.autocomplete.push(suggestedWord);
-
+      this.autocomplete.push({suggestedWord: suggestedWord, selectionCount: currentNode.selectionCount});
     }
     let childrenLetters = Object.keys(currentNode.children);
     childrenLetters.forEach(letter => {
       let nextNode = currentNode.children[letter];
       this.autocompletePush(nextNode, suggestedWord + letter)
     })
+    return this.autocomplete;
   }
 
   loadBuiltInDictionary () {

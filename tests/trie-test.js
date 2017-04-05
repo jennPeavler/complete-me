@@ -229,5 +229,16 @@ describe('Trie', () => {
     trie.select('boogie')
     assert.equal(lastNode.selectionCount, 1)
   })
+
+  it.only('be a test', () => {
+    let trie = new Trie()
+    trie.insert('boo')
+    trie.insert('boogie')
+    trie.insert('boobies')
+    trie.select('boobies')
+    trie.select('boobies')
+    trie.select('boogie')
+    trie.suggest('boo')
+  })
 //******End of Describe
 })
