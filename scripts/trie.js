@@ -31,26 +31,14 @@ export default class Trie {
   }
 
   suggest(partialWord) {
-    let splitWord = partialWord.split('');
-    let currentNode = this.root;
-    let suggestedWord = partialWord;
-
-    if(!currentNode.children[splitWord[0]]) {
-      return 'no suggestions';
-    }
-
-    splitWord.forEach(letter => {
-      if(currentNode.children[letter]) {
-      currentNode = currentNode.children[letter];
-      }
-    })
-
-    this.autocompletePush(currentNode, suggestedWord)
+    let currentNode = this.locateLastNode(partialWord)
+    this.autocompletePush(currentNode, partialWord)
   }
 
   autocompletePush (currentNode, suggestedWord) {
     if(currentNode.endWord) {
       this.autocomplete.push(suggestedWord);
+
     }
     let childrenLetters = Object.keys(currentNode.children);
     childrenLetters.forEach(letter => {
@@ -82,6 +70,11 @@ export default class Trie {
       }
     })
     return lastNode;
+  }
+
+  select(word) {
+    let lastNode = this.locateLastNode(word);
+    lastNode.selectionCount++;
   }
 
 //*****End of Trie Class

@@ -7,7 +7,6 @@ require ('locus')
 
 describe('Trie', () => {
 
-
   it('should be able to make a new instance of itself', () => {
     let trie = new Trie();
     expect(trie).to.be.instanceOf(Trie);
@@ -206,15 +205,29 @@ describe('Trie', () => {
     expect(trie.autocomplete).to.not.equal(["Zyrenian", "Zyrian", "Zyryan"])
   })
 
-  it.only('locate the last node of a string', () => {
+  it('locate the last node of a string', () => {
     let trie = new Trie();
     trie.insert('loud')
     trie.insert('love')
     let lastNode = trie.locateLastNode('lo')
     assert.deepEqual(Object.keys(lastNode.children), ['u', 'v'])
-
   })
 
+  it('should insert words that have not been selected', () => {
+    let trie = new Trie()
+    trie.insert('boogie')
+    let lastNode = trie.locateLastNode('boogie')
+    assert.equal(lastNode.selectionCount, 0)
+  })
 
+  it('should select a word', () => {
+    let trie = new Trie()
+    trie.insert('boogie')
+    let lastNode = trie.locateLastNode('boogie')
+    assert.equal(lastNode.selectionCount, 0)
+
+    trie.select('boogie')
+    assert.equal(lastNode.selectionCount, 1)
+  })
 //******End of Describe
 })
