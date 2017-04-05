@@ -34,16 +34,14 @@ export default class Trie {
   suggest(partialWord) {
     let currentNode = this.locateLastNode(partialWord)
     this.autocomplete = this.autocompletePush(currentNode, partialWord)
-    console.log(this.autocomplete)
+    // console.log(this.autocomplete)
     this.autocomplete.sort(( currentElement, nextElement) => {
       return nextElement.selectionCount - currentElement.selectionCount;
     });
-    console.log(this.autocomplete);
+
     this.autocomplete.forEach(element => {
       this.autocompleteList.push(element.suggestedWord)
     })
-
-    console.log(this.autocompleteList);
     return this.autocompleteList;
   }
 
