@@ -18,6 +18,7 @@ h1 {
 
 th {
   font-size: 26px;
+  padding-bottom: 10px;
 }
 #input-box {
   width: 200px;
@@ -31,4 +32,8 @@ button {
   width: 204px;
   height: 30px;
   /*font-family: 'Macondo', cursive;*/
+}
+
+.words {
+  text-align: center;
 }
