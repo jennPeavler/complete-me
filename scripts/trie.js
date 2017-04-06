@@ -9,23 +9,25 @@ export default class Trie {
   constructor() {
     this.root = new Node();
     this.wordCount = 0;
-    this.autocomplete = []
+    this.autocomplete = [];
   }
 
   insert(word) {
-    let splitWord = word.split('');
-    let currentNode = this.root;
+    
+      // eval(locus);
+      let splitWord = word.split('');
+      let currentNode = this.root;
 
-    splitWord.forEach((letter, i) => {
-      if(!currentNode.children[letter]) {
-        currentNode.children[letter] = new Node(letter)
-        if(i === splitWord.length - 1 ) {
-          this.wordCount++;
+      splitWord.forEach((letter, i) => {
+        if(!currentNode.children[letter]) {
+          currentNode.children[letter] = new Node(letter);
+          if(i === splitWord.length - 1 ) {
+            this.wordCount++;
+          }
         }
-      }
-      currentNode = currentNode.children[letter];
-    })
-    currentNode.endWord = true;
+        currentNode = currentNode.children[letter];
+      })
+      currentNode.endWord = true;
   }
 
   count() {
@@ -33,15 +35,15 @@ export default class Trie {
   }
 
   suggest(partialWord) {
-    let currentNode = this.locateLastNode(partialWord)
+    let currentNode = this.locateLastNode(partialWord);
 
-    this.autocomplete = this.autocompletePush(currentNode, partialWord)
-    this.autocomplete.sort(( currentElement, nextElement) => {
+    this.autocomplete = this.autocompletePush(currentNode, partialWord);
+    this.autocomplete.sort(( currentElement, nextElement ) => {
       return nextElement.selectionCount - currentElement.selectionCount;
     });
     this.autocomplete.forEach((element, i) => {
-      this.autocomplete[i] = element.suggestedWord
-    })
+      this.autocomplete[i] = element.suggestedWord;
+    });
     return this.autocomplete;
   }
 
@@ -52,18 +54,18 @@ export default class Trie {
     let childrenLetters = Object.keys(currentNode.children);
     childrenLetters.forEach(letter => {
       let nextNode = currentNode.children[letter];
-      this.autocompletePush(nextNode, suggestedWord + letter)
-    })
+      this.autocompletePush(nextNode, suggestedWord + letter);
+    });
     return this.autocomplete;
   }
 
   loadBuiltInDictionary () {
-    const text = "/usr/share/dict/words"
-    let dictionary = fs.readFileSync(text).toString().trim().split('\n')
+    const text = "/usr/share/dict/words";
+    let dictionary = fs.readFileSync(text).toString().trim().split('\n');
 
     dictionary.forEach(word => {
       this.insert(word);
-    } )
+    });
   }
 
   locateLastNode(string) {
@@ -92,11 +94,11 @@ export default class Trie {
     word.split('').forEach(letter => {
       if(currentNode.children[letter]) {
         // eval(locus);
-        assert.equal(currentNode.children[letter].data, letter)
-        expect(currentNode.children[letter].data).to.not.equal('z')
-        currentNode = currentNode.children[letter]
+        assert.equal(currentNode.children[letter].data, letter);
+        expect(currentNode.children[letter].data).to.not.equal('z');
+        currentNode = currentNode.children[letter];
       }
-    })
+    });
   }
 
 }
