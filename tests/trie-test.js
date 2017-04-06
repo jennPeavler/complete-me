@@ -35,8 +35,6 @@ describe('Trie constructor', () => {
   it('should start with no autocompletions', () => {
     assert.deepEqual(trie.autocomplete, []);
   })
-
-
 })
 
 describe('How to insert words into trie', () => {
