@@ -98,5 +98,5 @@ export default class Trie {
       }
     })
   }
-//*****End of Trie Class
+
 }

@@ -5,33 +5,47 @@ import Node from '../scripts/node'
 require ('locus')
 
 
+let trie;
 
-describe('Trie', () => {
+describe('Trie constructor', () => {
+  beforeEach( () => {
+    trie = new Trie();
+  })
 
   it('should be able to make a new instance of itself', () => {
-    let trie = new Trie();
     expect(trie).to.be.instanceOf(Trie);
   })
 
   it('should have a root will null data', () => {
-    let trie = new Trie();
     assert.equal(trie.root.data, null);
   })
 
   it('should have a root that has a children object', () => {
-    let trie = new Trie();
     assert.isObject(trie.root.children);
   })
 
   it('should start with no children in its root', () => {
-    let trie = new Trie();
     assert.deepEqual(Object.keys(trie.root.children), []);
   })
 
-  it('should be able to add nodes for letters in words', () => {
-    let trie = new Trie();
-    trie.insert('good');
+  it('should start with no words', () => {
+    assert.equal(trie.wordCount, 0);
+  })
 
+  it('should start with no autocompletions', () => {
+    assert.deepEqual(trie.autocomplete, []);
+  })
+
+
+})
+
+describe('How to insert words into trie', () => {
+  beforeEach( () => {
+    trie = new Trie();
+  })
+
+  it('should be able to add nodes for the letter in an inseted word', () => {
+    trie.insert('good');
     trie.traverseNodesTest('good');
     /*
     assert.equal(trie.root.children.hasOwnProperty('g'), true);
@@ -43,13 +57,11 @@ describe('Trie', () => {
   })
 
   it('should be able to insert more than one word', () => {
-    let trie = new Trie();
     trie.insert('gig');
     trie.insert('laugh');
 
     trie.traverseNodesTest('gig');
     trie.traverseNodesTest('laugh');
-
     /*
     assert.equal(trie.root.children.hasOwnProperty('g'), true);
     assert.equal(trie.root.children.hasOwnProperty('l'), true);
@@ -66,8 +78,6 @@ describe('Trie', () => {
   })
 
   it('should build onto an existing data structure', () => {
-    let trie = new Trie();
-
     trie.insert('gig');
     trie.insert('gift');
     trie.traverseNodesTest('gig');
@@ -78,11 +88,9 @@ describe('Trie', () => {
     assert.equal(trie.root.children.g.children.i.children.hasOwnProperty('g'), true);
     assert.equal(trie.root.children.g.children.i.children.hasOwnProperty('f'), true);
     assert.equal(trie.root.children.g.children.i.children.hasOwnProperty('z'), false); */
-
   })
 
   it('should build onto an existing data structure, test2', () => {
-    let trie = new Trie();
     trie.insert('gig');
     trie.insert('giggle');
     trie.insert('gift');
@@ -100,12 +108,30 @@ describe('Trie', () => {
     trie.traverseNodesTest('gross');
   })
 
-  it('should keep track of how many words. Duplicate words should not count twice', () => {
-    let trie = new Trie();
+  it('should set the node property endWord to true if node is end of word', () => {
 
     trie.insert('gig');
-    assert.equal(trie.count(), 1)
+    trie.insert('pot');
 
+    assert.equal(trie.root.children.g.children.i.children.g.endWord, true);
+    assert.equal(trie.root.children.p.children.o.children.t.endWord, true);
+    assert.equal(trie.root.children.p.endWord, false)
+  })
+
+  it('should insert words that have not a selectionCount of zero', () => {
+    trie.insert('boogie')
+    let lastNode = trie.locateLastNode('boogie')
+    assert.equal(lastNode.selectionCount, 0)
+  })
+
+})
+
+describe('How to count words in a trie', () => {
+  beforeEach( () => {
+    trie = new Trie();
+  })
+
+  it('should keep track of how many words it has.', () => {
     trie.insert('gig');
     assert.equal(trie.count(), 1)
 
@@ -115,48 +141,60 @@ describe('Trie', () => {
     trie.insert('gift');
     assert.equal(trie.count(), 3)
 
-    trie.insert('gift');
-    assert.equal(trie.count(), 3)
     trie.insert('laughter');
-
     assert.equal(trie.count(), 4)
+
+    trie.insert('lovely');
+    assert.equal(trie.count(), 5)
+
+    trie.insert('ladies');
+    assert.equal(trie.count(), 6)
   })
 
-  it('should set the node property endWord to true if node is end of word', () => {
-    let trie = new Trie();
+  it('should not count duplicate words twice.', () => {
     trie.insert('gig');
-    trie.insert('pot');
+    assert.equal(trie.count(), 1)
 
-    assert.equal(trie.root.children.g.children.i.children.g.endWord, true);
-    assert.equal(trie.root.children.p.children.o.children.t.endWord, true);
-    assert.equal(trie.root.children.p.endWord, false)
+    trie.insert('gig');
+    assert.equal(trie.count(), 1)
+
+    trie.insert('gig');
+    assert.equal(trie.count(), 1)
+
+    trie.insert('gift');
+    assert.equal(trie.count(), 2)
+
+    trie.insert('gift');
+    assert.equal(trie.count(), 2)
+  })
+
+})
+
+describe('How to make autocomplete suggestions', () => {
+  beforeEach( () => {
+    trie = new Trie();
+  })
+
+  it('should suggest words that have the same first letter', () => {
+    trie.insert('gig')
+    trie.insert('giggle')
+    trie.insert('gross')
+    let autocompleteList = trie.suggest('g')
+
+    assert.deepEqual(autocompleteList, ['gig', 'giggle', 'gross'])
   })
 
   it('should not suggest incorrect words that begin with the same letter', () => {
-    let trie = new Trie();
-
     trie.insert('laugh')
     trie.insert('laughter')
     trie.insert('laude')
     trie.insert('little')
-
     let autocompleteList = trie.suggest('lau')
+
     assert.deepEqual(autocompleteList, ['laugh', 'laughter', 'laude'])
   })
 
-  it('should suggest words that have the same first letter', () => {
-    let trie = new Trie();
-
-    trie.insert('gig')
-    trie.insert('giggle')
-    trie.insert('gross')
-    let autocompleteList = trie.suggest('g')
-    assert.deepEqual(autocompleteList, ['gig', 'giggle', 'gross'])
-  })
-
   it('should not suggest words that do not have the same first letter', () => {
-    let trie = new Trie();
-
     trie.insert('gig')
     trie.insert('giggle')
     trie.insert('gross')
@@ -165,59 +203,70 @@ describe('Trie', () => {
     assert.deepEqual(autocompleteList, ['gig', 'giggle', 'gross'])
   })
 
-  it('should have access to the built in dictionary', () => {
-    let trie = new Trie();
+  it('should take into account capital letters', () => {
+    trie.insert('Zyrenian');
+    trie.insert('Zyrian');
+    trie.insert('Zyryan');
+    trie.insert('zyrofoam');
+    let autocompleteList = trie.suggest('zyr');
+    expect(autocompleteList).to.not.equal(['Zyrenian', 'Zyrian', 'Zyryan'])
+  })
 
+})
+
+describe('How to load and use the built in dictionary', () => {
+  beforeEach( () => {
+    trie = new Trie();
+  })
+
+  it('should have access to the built in dictionary', () => {
     trie.loadBuiltInDictionary();
     expect(trie.count()).to.equal(235886)
   })
 
   it('should be able to expand the built in dictionary', () => {
-    let trie = new Trie();
-
     trie.loadBuiltInDictionary();
     trie.insert('superJackPotBaaaby')
+
     expect(trie.count()).to.equal(235887)
   })
 
   it('should suggest words from the built in dictionary', () => {
-    let trie = new Trie();
     trie.loadBuiltInDictionary();
     let autocompleteList = trie.suggest('piz');
+
     assert.deepEqual(autocompleteList, ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"])
   })
 
   it('should suggest words from the built in dictionary - test2', () => {
-    let trie = new Trie();
     trie.loadBuiltInDictionary();
     let autocompleteList = trie.suggest('Zyr');
+
     assert.deepEqual(autocompleteList, ["Zyrenian", "Zyrian", "Zyryan"])
   })
 
-  it('should take into account capital letters', () => {
-    let trie = new Trie();
-    trie.loadBuiltInDictionary();
-    trie.suggest('zyr');
-    expect(trie.autocomplete).to.not.equal(["Zyrenian", "Zyrian", "Zyryan"])
+})
+
+describe('How to locate the last node of a word', () => {
+  beforeEach( () => {
+    trie = new Trie();
   })
 
   it('locate the last node of a string', () => {
-    let trie = new Trie();
     trie.insert('loud')
     trie.insert('love')
     let lastNode = trie.locateLastNode('lo')
+
     assert.deepEqual(Object.keys(lastNode.children), ['u', 'v'])
   })
+})
 
-  it('should insert words that have not a selectionCount of zero', () => {
-    let trie = new Trie()
-    trie.insert('boogie')
-    let lastNode = trie.locateLastNode('boogie')
-    assert.equal(lastNode.selectionCount, 0)
+describe('How to select your favorite words', () => {
+  beforeEach( () => {
+    trie = new Trie();
   })
 
   it('should select a word', () => {
-    let trie = new Trie()
     trie.insert('boogie')
     let lastNode = trie.locateLastNode('boogie')
     assert.equal(lastNode.selectionCount, 0)
@@ -227,7 +276,6 @@ describe('Trie', () => {
   })
 
   it('should give suggestion preference to most selected words', () => {
-    let trie = new Trie()
 
     trie.insert('boo')
     trie.insert('boogie')
@@ -240,5 +288,5 @@ describe('Trie', () => {
     expect(autocompleteList).to.deep.equal([ 'boolean', 'boogie', 'boo' ])
 
   })
-//******End of Describe
+
 })
