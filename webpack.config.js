@@ -17,5 +17,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['', '.js', '.json', '.css']
-  }
+  },
+  node: {
+   console: 'empty',
+   fs: 'empty',
+   net: 'empty',
+   tls: 'empty'
+ }
 };
