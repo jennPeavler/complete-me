@@ -31,10 +31,7 @@ describe('Trie constructor', () => {
   it('should start with no words', () => {
     assert.equal(trie.wordCount, 0);
   });
-
-  it('should start with no autocompletions', () => {
-    assert.deepEqual(trie.autocomplete, []);
-  });
+  
 });
 
 describe('How to insert words into trie', () => {
@@ -123,7 +120,12 @@ describe('How to insert words into trie', () => {
     assert.equal(lastNode.selectionCount, 0);
   });
 
-  it.skip('should not be able to insert numbers', () => {
+  it('should not be able to insert numbers', () => {
+    expect(trie.isNumeric('number')).to.equal(false);
+    expect(trie.isNumeric('123')).to.equal(true);
+    expect(trie.isNumeric(123)).to.equal(true);
+    // expect(trie.isNumeric('1n23')).to.equal(true);
+
     trie.insert('333');
     assert.notEqual(trie.root.children.hasOwnProperty('3'), true)
 
@@ -198,9 +200,11 @@ describe('How to make autocomplete suggestions', () => {
     trie.insert('gig');
     trie.insert('giggle');
     trie.insert('gross');
+    trie.insert('big');
     let autocompleteList = trie.suggest('g');
 
     assert.deepEqual(autocompleteList, ['gig', 'giggle', 'gross']);
+
   });
 
   it('should not suggest incorrect words that begin with the same letter', () => {
@@ -231,6 +235,30 @@ describe('How to make autocomplete suggestions', () => {
     let autocompleteList = trie.suggest('zyr');
 
     expect(autocompleteList).to.not.equal(['Zyrenian', 'Zyrian', 'Zyryan']);
+  });
+
+  it('should be able to suggest multiple user inputs', () => {
+    let insertWords = (words) => {
+      words.forEach(word => {
+        trie.insert(word);
+      })
+    }
+
+    let words1 = ['gig', 'giggle', 'gross'];
+    let words2 = ['bubble', 'burden', 'busy'];
+    let words3 = ['array', 'arise', 'around', 'ardent'];
+
+    insertWords(words1);
+    insertWords(words2);
+    insertWords(words3);
+
+    let list1 = trie.suggest('g');
+    let list2 = trie.suggest('bu');
+    let list3 = trie.suggest('ar');
+
+    expect(list1).to.deep.equal(words1);
+    expect(list2).to.deep.equal(words2);
+    expect(list3).to.deep.equal(words3);
   });
 
 });
@@ -268,6 +296,26 @@ describe('How to load and use the built in dictionary', () => {
     assert.deepEqual(autocompleteList, ["Zyrenian", "Zyrian", "Zyryan"])
   });
 
+  it('should be able to autocomplete multiple times from the dictionary', () => {
+    trie.loadBuiltInDictionary();
+
+    let suggestion1 = trie.suggest('piz');
+
+    assert.deepEqual(suggestion1,
+    ["pize", "pizza", "pizzeria", "pizzicato", "pizzle"]);
+
+    let suggestion2 = trie.suggest('Zyr');
+
+    assert.deepEqual(suggestion2,
+    ["Zyrenian", "Zyrian", "Zyryan"])
+  })
+
+  it('should not include undefined elements in suggestions', () => {
+    trie.loadBuiltInDictionary();
+    let suggestions = trie.suggest('tac');
+    expect(suggestions).to.not.include(undefined);
+  })
+
 });
 
 describe('How to locate the last node of a word', () => {
@@ -282,6 +330,7 @@ describe('How to locate the last node of a word', () => {
 
     assert.deepEqual(Object.keys(lastNode.children), ['u', 'v']);
   });
+
 });
 
 describe('How to select your favorite words', () => {
@@ -314,5 +363,5 @@ describe('How to select your favorite words', () => {
   it.skip('should not be able to select a word that is not in the dict', () => {
 
   });
-  
+
 });
