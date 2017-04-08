@@ -9,11 +9,11 @@ export default class Trie {
   constructor() {
     this.root = new Node();
     this.wordCount = 0;
-    this.autocomplete = [];
+    // this.autocomplete = [];
   }
 
   insert(word) {
-    
+    if(!this.isNumeric(word)) {
       // eval(locus);
       let splitWord = word.split('');
       let currentNode = this.root;
@@ -28,6 +28,7 @@ export default class Trie {
         currentNode = currentNode.children[letter];
       })
       currentNode.endWord = true;
+    }
   }
 
   count() {
@@ -35,28 +36,29 @@ export default class Trie {
   }
 
   suggest(partialWord) {
-    let currentNode = this.locateLastNode(partialWord);
 
-    this.autocomplete = this.autocompletePush(currentNode, partialWord);
-    this.autocomplete.sort(( currentElement, nextElement ) => {
+    let currentNode = this.locateLastNode(partialWord);
+    let autocomplete = this.autocompletePush(currentNode, partialWord);
+    autocomplete.sort(( currentElement, nextElement ) => {
       return nextElement.selectionCount - currentElement.selectionCount;
     });
-    this.autocomplete.forEach((element, i) => {
-      this.autocomplete[i] = element.suggestedWord;
+    autocomplete.forEach((element, i) => {
+      autocomplete[i] = element.suggestedWord;
     });
-    return this.autocomplete;
+    return autocomplete;
   }
 
-  autocompletePush (currentNode, suggestedWord) {
+  autocompletePush (currentNode, suggestedWord, currentArray) {
+    let autocomplete = currentArray || [];
     if(currentNode.endWord) {
-      this.autocomplete.push({suggestedWord: suggestedWord, selectionCount: currentNode.selectionCount});
+      autocomplete.push({suggestedWord: suggestedWord, selectionCount: currentNode.selectionCount});
     }
     let childrenLetters = Object.keys(currentNode.children);
     childrenLetters.forEach(letter => {
       let nextNode = currentNode.children[letter];
-      this.autocompletePush(nextNode, suggestedWord + letter);
+      this.autocompletePush(nextNode, suggestedWord + letter, autocomplete);
     });
-    return this.autocomplete;
+    return autocomplete;
   }
 
   loadBuiltInDictionary () {
@@ -100,5 +102,9 @@ export default class Trie {
       }
     });
   }
+
+  isNumeric (word) {
+    return !isNaN(parseFloat(word)) && isFinite(word);
+  };
 
 }
